@@ -11945,7 +11945,7 @@ There are 836 test dog images.
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">cv2</span>                
@@ -13500,7 +13500,7 @@ TkSuQmCC
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># returns &quot;True&quot; if face is detected in image stored at img_path</span>
@@ -13537,7 +13537,7 @@ TkSuQmCC
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">human_files_short</span> <span class="o">=</span> <span class="n">human_files</span><span class="p">[:</span><span class="mi">100</span><span class="p">]</span>
@@ -13584,6 +13584,12 @@ perfomance of face_detection on dog files 11 percent
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Question 2:</strong> This algorithmic choice necessitates that we communicate to the user that we accept human images only when they provide a clear view of a face (otherwise, we risk having unneccessarily frustrated users!). In your opinion, is this a reasonable expectation to pose on the user? If not, can you think of a way to detect humans in images that does not necessitate an image with a clearly presented face?</p>
 <p><strong>Answer:</strong></p>
+<p>I think that if we communicate this to our users it will not be a huge dealbreaker. 
+Of course this will not be the case in the next year(s), users tends to be more and more spoiled about the interface.
+The easiest way to deal with this is to create (or use a pretrained) cnn model and we can use augmentation to train more our model better. We can also find more images from different angles, light conditions, background etc. 
+All the above will help our model's accurancy.</p>
+<p>An other approache to train our model to identify humans without depending only to identify human faces. We can use body shape, shadow, other body parts and also face expressions like "smile".
+This will help to remove the restriction of front facing images.</p>
 <p>We suggest the face detector from OpenCV as a potential way to detect human images in your algorithm, but you are free to explore other approaches, especially approaches that make use of deep learning :).  Please use the code cell below to design and test your own face detection algorithm.  If you decide to pursue this <em>optional</em> task, report performance on each of the datasets.</p>
 
 </div>
@@ -13591,52 +13597,15 @@ perfomance of face_detection on dog files 11 percent
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## (Optional) TODO: Report the performance of another  </span>
 <span class="c1">## face detection algorithm on the LFW dataset</span>
 <span class="c1">### Feel free to use as many code cells as needed.</span>
-
-<span class="c1">### I just tweak a bit the minNeighbors and the results was great, by sacrifizing 1% of the success human detection </span>
-<span class="c1">### we reduced the false positive from the dog training set down to 3%</span>
-<span class="k">def</span> <span class="nf">face_detector_v2</span><span class="p">(</span><span class="n">img_path</span><span class="p">):</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">img_path</span><span class="p">)</span>
-    <span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
-    <span class="n">faces</span> <span class="o">=</span> <span class="n">face_cascade</span><span class="o">.</span><span class="n">detectMultiScale</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="n">scaleFactor</span><span class="o">=</span><span class="mf">1.1</span><span class="p">,</span>
-    <span class="n">minNeighbors</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
-    <span class="n">minSize</span><span class="o">=</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">))</span>
-    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">faces</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
-
-
-<span class="n">human_files_detection_test</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="mi">1</span> <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">human_files_short</span> <span class="k">if</span> <span class="n">face_detector_v2</span><span class="p">(</span><span class="n">img</span><span class="p">)])</span>
-<span class="n">dog_files_detection_test</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="mi">1</span> <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">dog_files_short</span> <span class="k">if</span> <span class="n">face_detector_v2</span><span class="p">(</span><span class="n">img</span><span class="p">)])</span>
-
-<span class="c1"># we dont need to mult with 100 because we have only 100 samples</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;perfomance of face_detection on human files </span><span class="si">%s</span><span class="s1"> percent&#39;</span> <span class="o">%</span> <span class="n">human_files_detection_test</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;perfomance of face_detection on dog files </span><span class="si">%s</span><span class="s1"> percent&#39;</span> <span class="o">%</span> <span class="n">dog_files_detection_test</span><span class="p">)</span>
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>perfomance of face_detection on human files 98 percent
-perfomance of face_detection on dog files 3 percent
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -13955,9 +13924,16 @@ perfomance of dog_detector on dog files 100 percent
 <p><img src="images/sample_cnn.png" alt="Sample CNN"></p>
 <p><strong>Question 4:</strong> Outline the steps you took to get to your final CNN architecture and your reasoning at each step.  If you chose to use the hinted architecture above, describe why you think that CNN architecture should work well for the image classification task.</p>
 <p><strong>Answer:</strong></p>
-<p>The current archtecure helps implement a simple cnn to classify our images. Because i had a gpu i increased the number of conv2d + maxPool layers in increaments of power of 2 ( 16, 32, 64, 128,256). 
-I added the BatchNormalization because it helps with speed and accuracy ( i found it online and in many Quora questions and it seems that help a lot to normalize the results between every layer.)
-I add the Dropout layer to help with overfiting. Without the dropout the acc was around ~30% with dropout increased to ~35%</p>
+<p>The basic idea i got it from the class.
+To create a CNN we need three steps
+1)Convolution
+2)Activation
+3)Pooling.</p>
+<p>Then we can add as many hidden nodes as we need (or our hardware can process fast enougth ).
+4)After that make a fully connected network, This fully connected network gives ability to the CNN to classify our samples.</p>
+<p>After that i tried to optimize it so i added dropout layers (to reduce overfitting).
+Googling a bit more i found out that BatchNormalization normalizes the matrix after it is been through a convolution layer so that the scale of each dimension remains the same. It reduces the training time significantly. <a href="https://yashk2810.github.io/Applying-Convolutional-Neural-Network-on-the-MNIST-dataset/">source</a></p>
+<p>I run the below model many times with and without BatchNormalization, Dropout the perfomance boost was tramendus with both of them.</p>
 
 </div>
 </div>
